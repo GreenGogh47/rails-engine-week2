@@ -1,5 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe Transaction, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+RSpec.describe Merchant, type: :model do
+  describe 'relationships' do
+    it { should have_many :items }
+    it { should have_many :invoice_items }
+    it { should have_many :invoices }
+    it { should have_many :customers }
+    it { should have_many :transactions }
+  end
 end
