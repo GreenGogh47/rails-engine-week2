@@ -26,10 +26,10 @@ describe "Customers API" do
     end
 
     xdescribe "sad path - extension" do
-      it "sends a list of customers" do
+      it "sends an error if incorrect url" do
         create_list(:customer, 3)
   
-        get "/api/v1/customers"
+        get "/api/v1/customerz"
   
         expect(response).to be({
           "message": "your query could not be completed",
