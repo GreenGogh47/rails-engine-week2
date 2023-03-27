@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe "Merchants API" do
-  describe "happy path" do
+  describe "merchant index happy path" do
     it "sends a list of ALL merchants" do
       create_list(:merchant, 5)
 
@@ -22,7 +22,7 @@ describe "Merchants API" do
       end
     end
 
-    xdescribe "sad path - extension" do
+    xdescribe "merchant index sad path - extension" do
       it "sends an error if incorrect url" do
         create_list(:customer, 3)
   
@@ -36,6 +36,24 @@ describe "Merchants API" do
             "etc"
           ]
         })
+      end
+    end
+
+    describe "merchant show happy path" do
+      it "sends a list of ALL merchants" do
+        merchant = create(:merchant, id: 1)
+  
+        get "/api/v1/merchants/1"
+  
+        expect(response).to be_successful
+  
+        merchant = JSON.parse(response.body, symbolize_names: true)
+  
+        expect(merchant).to have_key(:id)
+        expect(merchant[:id]).to be_an(Integer)
+
+        expect(merchant).to have_key(:name)
+        expect(merchant[:name]).to be_a(String)
       end
     end
   end
