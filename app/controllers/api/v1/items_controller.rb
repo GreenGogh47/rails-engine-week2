@@ -13,7 +13,7 @@ class Api::V1::ItemsController < ApplicationController
     if item.save
       render json: ItemSerializer.new(item), status: :created
     else
-
+      render json: { errors: item.errors.full_messages }, status: :unprocessable_entity
     end
   end
 

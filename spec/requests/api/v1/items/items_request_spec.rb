@@ -83,5 +83,19 @@ describe "Items API Endpoint" do
       expect(item.unit_price).to eq(item_params[:unit_price])
       expect(item.merchant_id).to eq(item_params[:merchant_id])
     end
+
+    it "can't create a new item with missing params" do
+      item_params = ({
+        name: "oof",
+        unit_price: 99.99,
+        merchant_id: @merchant.id
+      })
+
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
   end
 end
