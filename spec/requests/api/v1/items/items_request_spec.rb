@@ -42,7 +42,6 @@ describe "Items API Endpoint" do
 
       expect(response).to be_successful
 
-      # require 'pry'; binding.pry
       data = JSON.parse(response.body, symbolize_names: true)
       item = data[:data]
 
@@ -127,6 +126,21 @@ describe "Items API Endpoint" do
       expect(response).to be_successful
       expect(Item.count).to eq(5)
       expect(Item.find_by(id: id)).to eq(nil)
+    end
+  end
+
+  describe "Merchant info" do
+    it "can get the merchant info for an item" do
+      id = create(:item, merchant_id: 1).id
+
+      get "/api/v1/items/#{id}/merchant"
+
+      expect(response).to be_successful
+
+      data = JSON.parse(response.body, symbolize_names: true)
+      merchant = data[:data]
+
+      expect(merchant[:id]).to eq(@merchant.id.to_s)
     end
   end
 end
