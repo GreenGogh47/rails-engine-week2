@@ -98,4 +98,20 @@ describe "Items API Endpoint" do
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
+
+  describe "Update Item" do
+    it "can update an existing item" do
+      id = create(:item, merchant_id: 1).id
+      previous_name = Item.last.name
+      item_params = { name: "New Name" }
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate({item: item_params})
+      item = Item.find_by(id: id)
+
+      expect(response).to be_successful
+      expect(item.name).to_not eq(previous_name)
+      expect(item.name).to eq("New Name")
+    end
+  end
 end
