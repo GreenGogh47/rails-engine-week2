@@ -114,4 +114,19 @@ describe "Items API Endpoint" do
       expect(item.name).to eq("New Name")
     end
   end
+
+  describe "Delete Item" do
+    it "can delete an item" do
+      id = create(:item, merchant_id: 1).id
+
+      expect(Item.count).to eq(6)
+
+      headers = {"CONTENT_TYPE" => "application/json"}
+      delete "/api/v1/items/#{id}", headers: headers
+
+      expect(response).to be_successful
+      expect(Item.count).to eq(5)
+      expect(Item.find_by(id: id)).to eq(nil)
+    end
+  end
 end
