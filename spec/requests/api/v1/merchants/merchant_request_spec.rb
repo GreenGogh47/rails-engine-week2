@@ -11,14 +11,14 @@ describe "Merchants API" do
 
       merchants = JSON.parse(response.body, symbolize_names: true)
 
-      expect(merchants.count).to eq(5)
+      expect(merchants[:data].count).to eq(5)
 
-      merchants.each do |merchant|
+      merchants[:data].each do |merchant|
         expect(merchant).to have_key(:id)
-        expect(merchant[:id]).to be_an(Integer)
+        expect(merchant[:id]).to be_an(String)
 
-        expect(merchant).to have_key(:name)
-        expect(merchant[:name]).to be_a(String)
+        expect(merchant[:attributes]).to have_key(:name)
+        expect(merchant[:attributes][:name]).to be_a(String)
       end
     end
 
@@ -49,11 +49,11 @@ describe "Merchants API" do
   
         merchant = JSON.parse(response.body, symbolize_names: true)
   
-        expect(merchant).to have_key(:id)
-        expect(merchant[:id]).to be_an(Integer)
+        expect(merchant[:data]).to have_key(:id)
+        expect(merchant[:data][:id]).to be_an(String)
 
-        expect(merchant).to have_key(:name)
-        expect(merchant[:name]).to be_a(String)
+        expect(merchant[:data][:attributes]).to have_key(:name)
+        expect(merchant[:data][:attributes][:name]).to be_a(String)
       end
     end
   end
