@@ -2,7 +2,7 @@ require "rails_helper"
 
 describe "Items API Endpoint" do
   before(:each) do
-    create(:merchant, id: 1)
+    @merchant = create(:merchant, id: 1)
     create_list(:item, 5, merchant_id: 1)
   end
 
@@ -60,6 +60,28 @@ describe "Items API Endpoint" do
 
       expect(item[:attributes]).to have_key(:merchant_id)
       expect(item[:attributes][:merchant_id]).to be_an(Integer)
+    end
+  end
+
+  describe "Create Item" do
+    it "can create a new item" do
+      item_params = ({
+        name: "New Item",
+        description: "New Description",
+        unit_price: 999.99,
+        merchant_id: @merchant.id
+      })
+
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+      item = Item.last
+
+      expect(response).to be_successful
+      expect(item.name).to eq(item_params[:name])
+      expect(item.description).to eq(item_params[:description])
+      expect(item.unit_price).to eq(item_params[:unit_price])
+      expect(item.merchant_id).to eq(item_params[:merchant_id])
     end
   end
 end
