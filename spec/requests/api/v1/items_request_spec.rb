@@ -112,6 +112,17 @@ describe "Items API Endpoint" do
       expect(item.name).to_not eq(previous_name)
       expect(item.name).to eq("New Name")
     end
+
+    it "can't update an item with missing params" do
+      id = create(:item, merchant_id: 1).id
+      item_params = { name: "" }
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate({item: item_params})
+      item = Item.find_by(id: id)
+
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
   end
 
   describe "Delete Item" do
