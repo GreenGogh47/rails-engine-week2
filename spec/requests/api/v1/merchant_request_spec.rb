@@ -90,5 +90,24 @@ describe "Merchants API" do
         end
       end
     end
+
+    describe "Merchant Search" do
+      it "can find all merchants by name fragment" do
+        merchant = create(:merchant, name: "Bob's Burgers")
+        merchant2 = create(:merchant, name: "Rob's Burgers")
+        merchant3 = create(:merchant, name: "Job's Burgers")
+
+        get "/api/v1/merchants/find_all?name=burgers"
+
+        expect(response).to be_successful
+      
+        data = JSON.parse(response.body, symbolize_names: true)
+        expect(data.count).to eq(3)
+        
+        item = data[:data]
+
+        require 'pry'; binding.pry
+      end
+    end
   end
 end

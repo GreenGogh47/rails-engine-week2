@@ -22,7 +22,7 @@ RSpec.describe Item, type: :model do
         item_2 = create(:item, name: 'Johns Adventure', merchant: merchant)
         item_3 = create(:item, name: 'Allisons Adventure', merchant: merchant)
 
-        expect(Item.find_by_name_fragment('adventure')).to eq(item_3)
+        expect(Item.find_by_name_fragment('advent')).to eq(item_3)
       end
     end
   end
