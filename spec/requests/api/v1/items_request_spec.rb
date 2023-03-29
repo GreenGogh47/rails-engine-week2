@@ -138,6 +138,11 @@ describe "Items API Endpoint" do
       expect(Item.count).to eq(5)
       expect(Item.find_by(id: id)).to eq(nil)
     end
+
+    it "destroy any invoice if this was the only item on an invoice" do
+      create(:invoice_item, item_id: 1)
+
+    end
   end
 
   describe "Merchant info" do
@@ -152,6 +157,24 @@ describe "Items API Endpoint" do
       merchant = data[:data]
 
       expect(merchant[:id]).to eq(@merchant.id.to_s)
+    end
+  end
+
+  describe "Item Search" do
+    it "finds a single item which matches a search term" do
+      id = create(:item, name: "AAAAnItem", merchant_id: 1).id
+      id2 = create(:item, name: "An AAAA Item", merchant_id: 1).id
+
+      get "/api/v1/items/find?name=AAAA"
+
+      expect(response).to be_successful
+      expect(response.count).to eq(1)
+
+      data = JSON.parse(response.body, symbolize_names: true)
+      item = data[:data]
+
+      expect(item[:id]).to eq(id.to_s)
+      expect(item[:id]).to_not eq(id2.to_s)
     end
   end
 end
