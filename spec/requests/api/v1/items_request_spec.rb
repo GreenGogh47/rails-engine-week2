@@ -193,7 +193,7 @@ describe "Items API Endpoint" do
         item = data[:data]
         expect(item[:id]).to eq(id3.to_s)
         expect(item[:id]).to_not eq(id2.to_s)
-        expect(item[:id]).to_not eq(id1.to_s)
+        expect(item[:id]).to_not eq(id.to_s)
       end
     end
 
