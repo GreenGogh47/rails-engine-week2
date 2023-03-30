@@ -8,4 +8,8 @@ class Item < ApplicationRecord
   def self.find_by_name_fragment(fragment)
     where("name ILIKE ?", "%#{fragment}%").order(:name).first
   end
+
+  def self.find_by_min_price(price)
+    where("unit_price <= ?", price).order(:name).first
+  end
 end

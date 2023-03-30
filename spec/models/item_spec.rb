@@ -25,5 +25,18 @@ RSpec.describe Item, type: :model do
         expect(Item.find_by_name_fragment('advent')).to eq(item_3)
       end
     end
+
+    describe '::find_by_min_price' do
+      it 'returns the first (alpha) item that matches the min price' do
+        merchant = create(:merchant, id: 1)
+        i1 = create(:item, name: "AAAA Item", unit_price: 1000, merchant_id: 1)
+        i2 = create(:item, name: "AAAA Item 2", unit_price: 500, merchant_id: 1)
+        i3 = create(:item, name: "AAAA Item 3", unit_price: 1, merchant_id: 1)
+        i4 = create(:item, name: "AAAB Item 4", unit_price: 1, merchant_id: 1)
+
+        expect(Item.find_by_min_price(1.00)).to eq(i3)
+        expect(Item.find_by_min_price(1.00)).to_not eq(i4)
+      end
+    end
   end
 end
