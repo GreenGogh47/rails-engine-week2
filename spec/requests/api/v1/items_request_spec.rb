@@ -214,7 +214,7 @@ describe "Items API Endpoint" do
         expect(item[:id]).to_not eq(id.to_s)
       end
 
-      xit "finds one item by max and min price" do
+      it "finds one item by max and min price" do
         id = create(:item, name: "AAAA Item", unit_price: 1000, merchant_id: 1).id
         id2 = create(:item, name: "AAAA Item 2", unit_price: 500, merchant_id: 1).id
         id3 = create(:item, name: "AAAA Item 3", unit_price: 1, merchant_id: 1).id
