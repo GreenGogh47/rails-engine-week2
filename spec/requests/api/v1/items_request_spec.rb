@@ -183,7 +183,7 @@ describe "Items API Endpoint" do
         id2 = create(:item, name: "AAAA Item 2", unit_price: 500, merchant_id: 1).id
         id3 = create(:item, name: "AAAA Item 3", unit_price: 1, merchant_id: 1).id
 
-        get "/api/v1/items/find?min_price=1.00"
+        get "/api/v1/items/find?min_price=999.00"
 
         expect(response).to be_successful
 
@@ -191,9 +191,9 @@ describe "Items API Endpoint" do
         expect(data.count).to eq(1)
 
         item = data[:data]
-        expect(item[:id]).to eq(id3.to_s)
+        expect(item[:id]).to eq(id.to_s)
         expect(item[:id]).to_not eq(id2.to_s)
-        expect(item[:id]).to_not eq(id.to_s)
+        expect(item[:id]).to_not eq(id3.to_s)
       end
     end
 
