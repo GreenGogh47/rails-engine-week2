@@ -22,8 +22,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_27_200144) do
   end
 
   create_table "invoice_items", force: :cascade do |t|
+    t.bigint "item_id", null: false
+    t.bigint "invoice_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["invoice_id"], name: "index_invoice_items_on_invoice_id"
+    t.index ["item_id"], name: "index_invoice_items_on_item_id"
   end
 
   create_table "invoices", force: :cascade do |t|
@@ -57,4 +61,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_27_200144) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "invoice_items", "invoices"
+  add_foreign_key "invoice_items", "items"
 end

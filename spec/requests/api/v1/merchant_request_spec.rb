@@ -96,17 +96,19 @@ describe "Merchants API" do
         merchant = create(:merchant, name: "Bob's Burgers")
         merchant2 = create(:merchant, name: "Rob's Burgers")
         merchant3 = create(:merchant, name: "Job's Burgers")
+        merchant4 = create(:merchant, name: "Fish and Chips, a weekend experience")
 
         get "/api/v1/merchants/find_all?name=burgers"
 
         expect(response).to be_successful
       
         data = JSON.parse(response.body, symbolize_names: true)
-        expect(data.count).to eq(3)
-        
         item = data[:data]
-
-        require 'pry'; binding.pry
+        
+        expect(item.count).to eq(3)
+        expect(item[0][:attributes][:name]).to eq(merchant.name)
+        expect(item[1][:attributes][:name]).to eq(merchant3.name)
+        expect(item[2][:attributes][:name]).to eq(merchant2.name)
       end
     end
   end
