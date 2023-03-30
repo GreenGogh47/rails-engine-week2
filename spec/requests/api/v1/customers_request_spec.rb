@@ -30,6 +30,8 @@ describe "Customers API" do
         create_list(:customer, 3)
   
         get "/api/v1/customerz"
+
+        require 'pry'; binding.pry
   
         expect(response).to be({
           "message": "your query could not be completed",

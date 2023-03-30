@@ -112,6 +112,17 @@ describe "Items API Endpoint" do
       expect(item.name).to_not eq(previous_name)
       expect(item.name).to eq("New Name")
     end
+
+    it "can't update an item with missing params" do
+      id = create(:item, merchant_id: 1).id
+      item_params = { name: "" }
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate({item: item_params})
+      item = Item.find_by(id: id)
+
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
   end
 
   describe "Delete Item" do
@@ -127,6 +138,11 @@ describe "Items API Endpoint" do
       expect(Item.count).to eq(5)
       expect(Item.find_by(id: id)).to eq(nil)
     end
+
+    xit "destroy any invoice if this was the only item on an invoice" do
+      create(:invoice_item, item_id: 1)
+
+    end
   end
 
   describe "Merchant info" do
@@ -141,6 +157,98 @@ describe "Items API Endpoint" do
       merchant = data[:data]
 
       expect(merchant[:id]).to eq(@merchant.id.to_s)
+    end
+  end
+
+  describe "Item Search" do
+    describe "happy path" do
+      it "finds a the first item which matches a search term" do
+        id2 = create(:item, name: "An AAAA Item", merchant_id: 1).id
+        id = create(:item, name: "AAAAnItem", merchant_id: 1).id
+        
+        get "/api/v1/items/find?name=AAAA"
+
+        expect(response).to be_successful
+        
+        data = JSON.parse(response.body, symbolize_names: true)
+        expect(data.count).to eq(1)
+        
+        item = data[:data]
+        expect(item[:id]).to eq(id.to_s)
+        expect(item[:id]).to_not eq(id2.to_s)
+      end
+
+      it "finds one item by min price" do
+        id = create(:item, name: "AAAA Item", unit_price: 1000, merchant_id: 1).id
+        id2 = create(:item, name: "AAAA Item 2", unit_price: 500, merchant_id: 1).id
+        id3 = create(:item, name: "AAAA Item 3", unit_price: 1, merchant_id: 1).id
+
+        get "/api/v1/items/find?min_price=999.00"
+
+        expect(response).to be_successful
+
+        data = JSON.parse(response.body, symbolize_names: true)
+        expect(data.count).to eq(1)
+
+        item = data[:data]
+        expect(item[:id]).to eq(id.to_s)
+        expect(item[:id]).to_not eq(id2.to_s)
+        expect(item[:id]).to_not eq(id3.to_s)
+      end
+
+      it "finds one item by max price" do
+        id = create(:item, name: "AAAA Item", unit_price: 1000, merchant_id: 1).id
+        id2 = create(:item, name: "AAAA Item 2", unit_price: 500, merchant_id: 1).id
+        id3 = create(:item, name: "AAAA Item 3", unit_price: 1, merchant_id: 1).id
+
+        get "/api/v1/items/find?max_price=2.00"
+
+        expect(response).to be_successful
+
+        data = JSON.parse(response.body, symbolize_names: true)
+        expect(data.count).to eq(1)
+
+        item = data[:data]
+        expect(item[:id]).to eq(id3.to_s)
+        expect(item[:id]).to_not eq(id2.to_s)
+        expect(item[:id]).to_not eq(id.to_s)
+      end
+
+      it "finds one item by max and min price" do
+        id = create(:item, name: "AAAA Item", unit_price: 1000, merchant_id: 1).id
+        id2 = create(:item, name: "AAAA Item 2", unit_price: 500, merchant_id: 1).id
+        id3 = create(:item, name: "AAAA Item 3", unit_price: 1, merchant_id: 1).id
+
+        get "/api/v1/items/find?max_price=501&min_price=499"
+
+        expect(response).to be_successful
+
+        data = JSON.parse(response.body, symbolize_names: true)
+        expect(data.count).to eq(1)
+
+        item = data[:data]
+        expect(item[:id]).to eq(id2.to_s)
+        expect(item[:id]).to_not eq(id3.to_s)
+        expect(item[:id]).to_not eq(id.to_s)
+      end
+    end
+
+    describe "sad path" do
+      xit "returns an error if parameter is missing" do
+
+      end
+
+      xit "returns an error if parameter is empty" do
+
+      end
+
+      xit "cannot send both name and min_price" do
+
+      end
+
+      xit "cannot send both name and min_price and max_price" do
+        
+      end
     end
   end
 end
