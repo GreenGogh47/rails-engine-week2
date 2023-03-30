@@ -161,20 +161,58 @@ describe "Items API Endpoint" do
   end
 
   describe "Item Search" do
-    it "finds a the first item which matches a search term" do
-      id2 = create(:item, name: "An AAAA Item", merchant_id: 1).id
-      id = create(:item, name: "AAAAnItem", merchant_id: 1).id
-      
-      get "/api/v1/items/find?name=AAAA"
+    describe "happy path" do
+      it "finds a the first item which matches a search term" do
+        id2 = create(:item, name: "An AAAA Item", merchant_id: 1).id
+        id = create(:item, name: "AAAAnItem", merchant_id: 1).id
+        
+        get "/api/v1/items/find?name=AAAA"
 
-      expect(response).to be_successful
-      
-      data = JSON.parse(response.body, symbolize_names: true)
-      expect(data.count).to eq(1)
-      
-      item = data[:data]
-      expect(item[:id]).to eq(id.to_s)
-      expect(item[:id]).to_not eq(id2.to_s)
+        expect(response).to be_successful
+        
+        data = JSON.parse(response.body, symbolize_names: true)
+        expect(data.count).to eq(1)
+        
+        item = data[:data]
+        expect(item[:id]).to eq(id.to_s)
+        expect(item[:id]).to_not eq(id2.to_s)
+      end
+
+      it "finds one item by min price" do
+        id = create(:item, name: "AAAA Item", unit_price: 1000, merchant_id: 1).id
+        id2 = create(:item, name: "AAAA Item 2", unit_price: 500, merchant_id: 1).id
+        id3 = create(:item, name: "AAAA Item 3", unit_price: 1, merchant_id: 1).id
+
+        get "/api/v1/items/find?min_price=1.00"
+
+        expect(response).to be_successful
+
+        data = JSON.parse(response.body, symbolize_names: true)
+        expect(data.count).to eq(1)
+
+        item = data[:data]
+        expect(item[:id]).to eq(id3.to_s)
+        expect(item[:id]).to_not eq(id2.to_s)
+        expect(item[:id]).to_not eq(id1.to_s)
+      end
+    end
+
+    describe "sad path" do
+      xit "returns an error if parameter is missing" do
+
+      end
+
+      xit "returns an error if parameter is empty" do
+
+      end
+
+      xit "cannot send both name and min_price" do
+
+      end
+
+      xit "cannot send both name and min_price and max_price" do
+        
+      end
     end
   end
 end
